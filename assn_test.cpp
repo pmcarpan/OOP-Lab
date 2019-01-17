@@ -27,14 +27,17 @@ class Time {
             int pos2 = timeStr.find(":", pos1 + 1);
             int pos3 = (len == 8) ? (len) : (len - 2);
 
-            h_ = stoi( timeStr.substr(0, pos1) );
-            m_ = stoi( timeStr.substr(pos1 + 1, pos2) );
-            s_ = stoi( timeStr.substr(pos2 + 1, pos3) );
+            int h, m, s;
+            h = stoi( timeStr.substr(0, pos1) );
+            m = stoi( timeStr.substr(pos1 + 1, pos2) );
+            s = stoi( timeStr.substr(pos2 + 1, pos3) );
 
-            if (!isValidTime()) {
+            if (!isValidTime(h, m, s, (len == 10))) {
                 cout << "Input time value(s) invalid" << endl;
                 return false;
             }
+
+            h_ = h; m_ = m; s_ = s;
 
             if (len == 10) {
                 if (timeStr[len - 2] == 'P') {
@@ -67,8 +70,10 @@ class Time {
         }
 
     private:
-        bool isValidTime() {
-            if (h_ < 0 || h_ > 24 || m_ < 0 || m_ > 59 || s_ < 0 || s_ > 59)
+        bool isValidTime(int h, int m, int s, bool twelveHour) {
+            if (h < 0 || h > 24 || m < 0 || m > 59 || s < 0 || s > 59)
+                return false;
+            if (twelveHour && h > 12)
                 return false;
             return true;
         }
@@ -113,7 +118,7 @@ class Time {
         void compareWithSystemTime() {
             int hSys, mSys, sSys, totSec, totSecSys;
             
-            time_t t = time(0); // time Sys
+            time_t t = time(0); // sys time
             tm *now = localtime(&t); // time_t to tm*
             
             // extract system time components
