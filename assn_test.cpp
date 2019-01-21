@@ -1,14 +1,20 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <string>
 using namespace std;
 
-#define fmt2w setfill('0') << setw(2) // pad with zeros, width 2 chars
+#define FMT2W setfill('0') << setw(2) // pad with zeros, width 2 chars
 
 class Time {
     private:
-        int h_ = 0, m_ = 0, s_ = 0;
+        int h_, m_, s_;
+
+    public:
+    	Time(int h = 0, int m = 0, int s = 0) {
+    		h_ = h; m_ = m; s_ = s;
+    	}
 
     public:
         bool takeInput() {
@@ -172,6 +178,11 @@ int main() {
         dispMenu();
         cout << "Enter choice: ";
         cin >> chc;
+        if (cin.fail()) {
+        	cin.clear();
+        	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        	chc = -1;
+        }
 
         if (chc == 1) {
             while (!t1.takeInput()) {
@@ -187,6 +198,11 @@ int main() {
         else if (chc == 4) {
             int minsToAdd;
             cout << "Enter minutes: "; cin >> minsToAdd;
+            while (cin.fail()) {
+            	cin.clear();
+            	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            	cout << "Invalid input. Enter minutes: "; cin >> minsToAdd;
+            }
             t1.addMinutes(minsToAdd);
         }
         else if (chc == 5) {
