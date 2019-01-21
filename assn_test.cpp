@@ -87,7 +87,7 @@ class Time {
     public:
         void disp24HourFormat() {
             cout << "24 h format: ";
-            cout << fmt2w << h_ << ":" << fmt2w << m_ << ":" << fmt2w << s_ <<
+            cout << FMT2W << h_ << ":" << FMT2W << m_ << ":" << FMT2W << s_ <<
                 endl;
         }
 
@@ -97,12 +97,12 @@ class Time {
             cout << "12 h format: ";
             if (h_ >= 12) {
                 hNormal = (h_ != 12) ? (h_ - 12) : (h_);
-                cout << fmt2w << hNormal << ":" << fmt2w << m_ << ":" << fmt2w << 
+                cout << FMT2W << hNormal << ":" << FMT2W << m_ << ":" << FMT2W << 
                     s_ << "PM" << endl;
             }
             else {
                 hNormal = (h_ == 0) ? (12) : (h_);
-                cout << fmt2w << hNormal << ":" << fmt2w << m_ << ":" << fmt2w << 
+                cout << FMT2W << hNormal << ":" << FMT2W << m_ << ":" << FMT2W << 
                     s_ << "AM" << endl;
             }
         }
