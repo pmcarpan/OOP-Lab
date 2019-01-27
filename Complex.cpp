@@ -5,13 +5,25 @@ using namespace std;
 
 class Complex {
     private:
-        double real_ = 0, img_ = 0;
+        double real_, img_;
 
     public:
-        bool takeInput() {
-            cin >> real_ >> img_;
-            return cin.fail();
-        }
+    	Complex() {
+    		real_ = 0;
+    		img_ = 0;
+    	}
+
+    public:
+    	Complex(double real) {
+    		real_ = real;
+    		img_ = 0;
+    	}
+
+	public:
+    	Complex(double real, double img) {
+    		real_ = real;
+    		img_ = img;
+    	}
 
     public:
         Complex add(const Complex& other) const {
@@ -23,7 +35,7 @@ class Complex {
 
     public:
         Complex operator+(const Complex& other) const {
-            return this->add(other);
+            return add(other);
         }
 
     public:
@@ -36,36 +48,163 @@ class Complex {
 
     public:
         Complex operator-(const Complex& other) const {
-            return this->sub(other);
+            return sub(other);
         }
 
     public:
         void disp() const {
-            cout << "Complex num: " << real_ << " + i" << img_;
+            cout << "Complex num: " << real_ << " + i" << img_ << endl;
         }
 
     private:
-        friend ostream & operator<<(ostream &output, const Complex &c) {
-            output << "Complex num: " << c.real_ << " + i" << c.img_;
+    	bool parseInput(const string input) {
+    		cout << "parseInput input = " << input << endl;
+
+    		string::size_type pos1, pos2; 
+
+    		pos1 = input.find('+');
+    		pos2 = input.find('+', pos1 + 1);
+    		if (pos1 != string::npos && pos2 != string::npos) { cout << "1" << endl;
+    			return false;
+    		}
+    		if (pos1 != string::npos) {
+    			return parseInputWithPlusOrMinus(input, true);
+    		}
+
+    		pos1 = input.find('-');
+    		if (pos1 == 0) pos1 = input.find('-', pos1 + 1);
+    		pos2 = input.find('-', pos1 + 1);
+    		if (pos1 != string::npos && pos2 != string::npos) { cout << "2" << endl;
+    			return false;
+    		}
+
+    		pos2 = input.find('i');
+    		if (pos2 != string::npos) {
+    			if (pos1 == 0 || pos1 == string::npos) {
+    				return parseInputWithImg(input);
+    			}
+	    		else {
+	    			return parseInputWithPlusOrMinus(input, false);
+	    		}
+    		}
+    		else {
+    			return parseInputWithReal(input);
+    		}
+    	}
+
+	private:
+		bool parseInputWithPlusOrMinus(const string input, bool isPlus) {
+			cout << "parseInputWithPlusOrMinus" << endl;
+
+			string::size_type pos1, pos2;
+			string left, right;
+			double real, img;
+
+			pos1 = (isPlus) ? (input.find('+')) : (input.find('-'));
+			if (pos1 == 0) pos1 = input.find('-', pos1 + 1);
+			pos2 = input.find('i');
+
+			if (pos2 == string::npos) return false;
+			if (pos2 != pos1 + 2) return false;
+			
+			left = input.substr(0, pos1);
+			right = input.substr(pos2 + 1);
+
+			try {
+				real = stod(left);
+				img = stod(right);
+			}
+			catch (...) {
+				return false;
+			}
+
+
+			real_ = real; 
+			img_ = (isPlus) ? (img) : (-img);
+			return true;
+		}
+
+	private:
+		bool parseInputWithImg(const string input) { 
+			cout << "parseInputWithImg" << endl;
+			
+			string::size_type pos1, pos2;
+			string left, right;
+			double img;
+
+			pos1 = input.find('-');
+			pos2 = input.find('i');
+
+			if (pos2 == string::npos) return false;
+			if (pos1 != string::npos && pos2 != pos1 + 1) return false;
+			
+			right = input.substr(pos2 + 1);
+
+			try {
+				img = stod(right);
+			}
+			catch (...) {
+				return false;
+			}
+
+
+			real_ = 0; 
+			img_ = (pos1 != string::npos) ? (img) : (-img);
+			return true;
+		}
+
+	private:
+		bool parseInputWithReal(const string input) {
+			cout << "parseInputWithReal" << endl;
+
+			double real;
+
+			try {
+				real = stod(input);
+			}
+			catch (...) {
+				return false;
+			}
+
+			real_ = real;
+			img_ = 0;
+			return true;
+		}
+
+        friend ostream& operator<<(ostream& output, const Complex& c) {
+            output << "Complex num: " << c.real_;
+            if (c.img_ >= 0) output << " + i" << c.img_;
+            else			output << " - i" << -c.img_;
             return output;
         }
 
+        friend istream& operator>>(istream& is, Complex& c) {
+        	if (is.fail()) return is;
+
+        	string input;
+        	getline(is, input);
+
+        	if (!c.parseInput(input)) {
+        		is.setstate(ios::failbit);
+        	}
+
+        	return is;
+        }
 };
 
 void dispMenu() {
     cout << "\nChoice\tFunction\n" <<
             "1\tInput\n" <<
-            "2\tDisplay in 12 h format\n" <<
-            "3\tDisplay in 24 h format\n" <<
-            "4\tAdd minutes\n" <<
-            "5\tCompare with system time\n" <<
-            "6\tExit" << endl;
+            "2\tAdd 2 complex numbers\n" <<
+            "3\tSub 2 complex numbers\n" <<
+            "4\tExit" << endl;
 }
 
 int main() {
     Complex c1, c2, c3;
-    c1.takeInput(); c2.takeInput();
-    c1.disp(); c2.disp();
+    cout << "Complex 1: "; cin >> c1; if (cin.fail()) { cout <<"Error" << endl; return 0; }
+    cout << "Complex 2: "; cin >> c2; if (cin.fail()) { cout <<"Error" << endl; return 0; }
+    cout << c1 << ", " << c2 << endl;
 
     c3 = c1 + c2;
     cout << c3 << endl;
