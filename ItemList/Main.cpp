@@ -70,6 +70,7 @@ public:
 		return -1;
 	}
 	static void dispItemList() {
+		if (currSize == 0) cout << "Item List Empty!\n";
 		for (int i = 0; i < currSize; i++) {
 			cout << "#" << i << ": ";
 			itemList[i].dispItem();
@@ -192,14 +193,71 @@ public:
 };
 
 class UserInterface {
+public:
+	static void dispMenu() {
+		cout << "\nChoice\tFunction\n" <<
+            "1\tPlace Order\n" <<
+            "2\tDisplay Current Order\n" <<
+            "3\tDisplay Item List\n" <<
+            "4\tExit\n" << endl;
+	}
 
+	static void runUser() {
+		int chc;
+		Order ord;
+		do {
+			dispMenu();
+			cout << "Enter choice: "; cin >> chc;
+			if (chc == 1) {
+				ord.takeOrder();
+			}
+			else if (chc == 2) {
+				ord.displayOrder();
+			}
+			else if (chc == 3) {
+				ItemList::dispItemList();
+			}
+			else if (chc == 4) {
+				cout << "Exiting\n";
+			}
+			else {
+				cout << "Invalid Choice\n";
+			}
+		} while (chc != 4);
+	}
 };
 
 class MasterInterface {
+public:
+	static void dispMenu() {
+		cout << "\nChoice\tFunction\n" <<
+            "1\tAdmin Menu\n" <<
+            "2\tUser Menu\n" <<
+            "3\tExit\n" << endl;
+	}
 
+	static void runMaster() {
+		int chc;
+		do {
+			dispMenu();
+			cout << "Enter Admin/User choice: "; cin >> chc;
+			if (chc == 1) {
+				AdminInterface::runAdmin();
+			}
+			else if (chc == 2) {
+				UserInterface::runUser();
+			}
+			else if (chc == 3) {
+				cout << "Exiting\n";
+			}
+			else {
+				cout << "Invalid Choice\n";
+			}
+		} while (chc != 3);
+	}
 };
 
 int main() {
-	AdminInterface::runAdmin();
+	MasterInterface::runMaster();
 }
  
